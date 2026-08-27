@@ -1,0 +1,17 @@
+{
+  "name": "gogo-international-school",
+  "version": "1.0.0",
+  "description": "Website and admin management system for GO-GO International School",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js",
+    "dev": "node server/server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^17.4.2",
+    "express": "^4.19.2",
+    "express-session": "^1.18.0",
+    "mssql": "^12.7.0"
+  }
+}
