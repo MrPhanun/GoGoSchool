@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Attendance — GO-GO Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <div class="topbar">
+        <h1>Attendance</h1>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head" style="gap:16px;">
+          <div class="form-row" style="margin:0;">
+            <label for="date-input">Date</label>
+            <input type="date" id="date-input" />
+          </div>
+          <div class="form-row" style="margin:0;">
+            <label for="class-select">Class</label>
+            <select id="class-select" class="field-select"></select>
+          </div>
+          <button class="btn btn-primary" id="save-btn" style="align-self:flex-end;">Save Attendance</button>
+        </div>
+        <div id="table-wrap">
+          <div class="empty-state">Loading…</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script>
+    let classes = [];
+    let students = [];
+    let attendance = [];
+
+    (async () => {
+      const user = await requireAuth();
+      if (!user) return;
+      renderSidebar('attendance.html', user);
+
+      document.getElementById('date-input').value = todayISO();
+      classes = await api('/api/classes');
+      document.getElementById('class-select').innerHTML = classes.map((c) => `<option value="${c.id}">${escapeHtml(c.name)}</option>`).join('');
+      students = await api('/api/students');
+
+      document.getElementById('date-input').addEventListener('change', renderTable);
+      document.getElementById('class-select').addEventListener('change', renderTable);
+      document.getElementById('save-btn').addEventListener('click', saveAttendance);
+
+      await renderTable();
+    })();
+
+    async function renderTable() {
+      const wrap = document.getElementById('table-wrap');
+      const date = document.getElementById('date-input').value;
+      const classId = Number(document.getElementById('class-select').value);
+
+      attendance = await api('/api/attendance');
+      const classStudents = students.filter((s) => s.classId === classId);
+
+      if (!classStudents.length) {
+        wrap.innerHTML = `<div class="empty-state"><div class="emoji">📋</div>No students in this class yet.</div>`;
+        return;
+      }
+
+      wrap.innerHTML = `
+        <table>
+          <thead><tr><th>Student</th><th>Status</th></tr></thead>
+          <tbody>
+            ${classStudents.map((s) => {
+              const record = attendance.find((a) => a.studentId === s.id && a.date === date);
+              const status = record ? record.status : 'present';
+              return `
+                <tr data-student-id="${s.id}">
+                  <td><strong>${escapeHtml(s.name)}</strong></td>
+                  <td>
+                    <select class="field-select status-select">
+                      <option value="present" ${status === 'present' ? 'selected' : ''}>✅ Present</option>
+                      <option value="absent" ${status === 'absent' ? 'selected' : ''}>❌ Absent</option>
+                      <option value="late" ${status === 'late' ? 'selected' : ''}>⏰ Late</option>
+                    </select>
+                  </td>
+                </tr>
+              `;
+            }).join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    async function saveAttendance() {
+      const date = document.getElementById('date-input').value;
+      const rows = document.querySelectorAll('#table-wrap tr[data-student-id]');
+      try {
+        for (const row of rows) {
+          const studentId = Number(row.dataset.studentId);
+          const status = row.querySelector('.status-select').value;
+          const existing = attendance.find((a) => a.studentId === studentId && a.date === date);
+          if (existing) {
+            await api(`/api/attendance/${existing.id}`, { method: 'PUT', body: { studentId, date, status } });
+          } else {
+            await api('/api/attendance', { method: 'POST', body: { studentId, date, status } });
+          }
+        }
+        showToast('Attendance saved');
+        await renderTable();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+  </script>
+</body>
+</html>

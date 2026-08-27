@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Enrollment Inquiries — GO-GO Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <div class="topbar">
+        <h1>Enrollment Inquiries</h1>
+      </div>
+
+      <div class="panel">
+        <div id="table-wrap">
+          <div class="empty-state">Loading inquiries…</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script>
+    let inquiries = [];
+
+    (async () => {
+      const user = await requireAuth();
+      if (!user) return;
+      renderSidebar('inquiries.html', user);
+      await loadInquiries();
+    })();
+
+    async function loadInquiries() {
+      const wrap = document.getElementById('table-wrap');
+      try {
+        inquiries = (await api('/api/inquiries')).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
+        if (!inquiries.length) {
+          wrap.innerHTML = `<div class="empty-state"><div class="emoji">✉️</div>No inquiries submitted yet.</div>`;
+          return;
+        }
+        wrap.innerHTML = `
+          <table>
+            <thead><tr><th>Parent</th><th>Contact</th><th>Child Age</th><th>Message</th><th>Received</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+              ${inquiries.map((i) => `
+                <tr>
+                  <td><strong>${escapeHtml(i.parentName)}</strong></td>
+                  <td>${escapeHtml(i.email)}<br/><span style="color:var(--text);font-size:0.82rem;">${escapeHtml(i.phone || '')}</span></td>
+                  <td>${escapeHtml(i.childAge || '—')}</td>
+                  <td style="max-width:280px;">${escapeHtml(i.message)}</td>
+                  <td>${formatDate(i.submittedAt)}</td>
+                  <td><span class="badge ${i.status === 'new' ? 'badge-yellow' : 'badge-green'}">${escapeHtml(i.status)}</span></td>
+                  <td>
+                    <div class="row-actions">
+                      ${i.status === 'new' ? `<button class="icon-btn" title="Mark Reviewed" onclick="markReviewed(${i.id})">✅</button>` : ''}
+                      <button class="icon-btn danger" title="Delete" onclick="deleteInquiry(${i.id})">🗑️</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (err) {
+        wrap.innerHTML = `<div class="empty-state">Failed to load inquiries.</div>`;
+      }
+    }
+
+    async function markReviewed(id) {
+      try {
+        await api(`/api/inquiries/${id}`, { method: 'PUT', body: { status: 'reviewed' } });
+        showToast('Marked as reviewed');
+        await loadInquiries();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    async function deleteInquiry(id) {
+      if (!confirm('Delete this inquiry?')) return;
+      try {
+        await api(`/api/inquiries/${id}`, { method: 'DELETE' });
+        showToast('Inquiry deleted');
+        await loadInquiries();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+  </script>
+</body>
+</html>

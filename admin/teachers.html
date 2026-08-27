@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teachers — GO-GO Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <div class="topbar">
+        <h1>Teachers</h1>
+        <button class="btn btn-primary" id="add-btn">+ Add Teacher</button>
+      </div>
+
+      <div class="panel">
+        <div id="table-wrap">
+          <div class="empty-state">Loading teachers…</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="teacher-modal">
+    <div class="modal">
+      <h3 id="modal-title">Add Teacher</h3>
+      <form id="teacher-form">
+        <input type="hidden" id="teacher-id" />
+        <div class="form-row">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" required />
+        </div>
+        <div class="form-row">
+          <label for="subject">Specialty / Subject</label>
+          <input type="text" id="subject" required />
+        </div>
+        <div class="form-row">
+          <label for="email">Email</label>
+          <input type="email" id="email" required />
+        </div>
+        <div class="form-row">
+          <label for="phone">Phone</label>
+          <input type="text" id="phone" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('teacher-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script>
+    let teachers = [];
+
+    (async () => {
+      const user = await requireAuth();
+      if (!user) return;
+      renderSidebar('teachers.html', user);
+      await loadTeachers();
+    })();
+
+    async function loadTeachers() {
+      const wrap = document.getElementById('table-wrap');
+      try {
+        teachers = await api('/api/teachers');
+        if (!teachers.length) {
+          wrap.innerHTML = `<div class="empty-state"><div class="emoji">👩‍🏫</div>No teachers yet.</div>`;
+          return;
+        }
+        wrap.innerHTML = `
+          <table>
+            <thead><tr><th>Name</th><th>Specialty</th><th>Email</th><th>Phone</th><th></th></tr></thead>
+            <tbody>
+              ${teachers.map((t) => `
+                <tr>
+                  <td><strong>${escapeHtml(t.name)}</strong></td>
+                  <td>${escapeHtml(t.subject)}</td>
+                  <td>${escapeHtml(t.email)}</td>
+                  <td>${escapeHtml(t.phone || '—')}</td>
+                  <td>
+                    <div class="row-actions">
+                      <button class="icon-btn" title="Edit" onclick="editTeacher(${t.id})">✏️</button>
+                      <button class="icon-btn danger" title="Delete" onclick="deleteTeacher(${t.id})">🗑️</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (err) {
+        wrap.innerHTML = `<div class="empty-state">Failed to load teachers.</div>`;
+      }
+    }
+
+    document.getElementById('add-btn').addEventListener('click', () => {
+      document.getElementById('modal-title').textContent = 'Add Teacher';
+      document.getElementById('teacher-form').reset();
+      document.getElementById('teacher-id').value = '';
+      openModal('teacher-modal');
+    });
+
+    function editTeacher(id) {
+      const t = teachers.find((t) => t.id === id);
+      if (!t) return;
+      document.getElementById('modal-title').textContent = 'Edit Teacher';
+      document.getElementById('teacher-id').value = t.id;
+      document.getElementById('name').value = t.name;
+      document.getElementById('subject').value = t.subject;
+      document.getElementById('email').value = t.email;
+      document.getElementById('phone').value = t.phone || '';
+      openModal('teacher-modal');
+    }
+
+    async function deleteTeacher(id) {
+      if (!confirm('Remove this teacher?')) return;
+      try {
+        await api(`/api/teachers/${id}`, { method: 'DELETE' });
+        showToast('Teacher removed');
+        await loadTeachers();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    document.getElementById('teacher-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('teacher-id').value;
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        subject: document.getElementById('subject').value.trim(),
+        email: document.getElementById('email').value.trim(),
+        phone: document.getElementById('phone').value.trim(),
+      };
+      try {
+        if (id) {
+          await api(`/api/teachers/${id}`, { method: 'PUT', body: payload });
+          showToast('Teacher updated');
+        } else {
+          await api('/api/teachers', { method: 'POST', body: payload });
+          showToast('Teacher added');
+        }
+        closeModal('teacher-modal');
+        await loadTeachers();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+  </script>
+</body>
+</html>

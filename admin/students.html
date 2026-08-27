@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Students — GO-GO Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <div class="topbar">
+        <h1>Students</h1>
+        <button class="btn btn-primary" id="add-btn">+ Add Student</button>
+      </div>
+
+      <div class="panel">
+        <div id="table-wrap">
+          <div class="empty-state">Loading students…</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="student-modal">
+    <div class="modal">
+      <h3 id="modal-title">Add Student</h3>
+      <form id="student-form">
+        <input type="hidden" id="student-id" />
+        <div class="form-row">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" required />
+        </div>
+        <div class="form-row">
+          <label for="age">Age</label>
+          <input type="number" id="age" min="1" max="12" required />
+        </div>
+        <div class="form-row">
+          <label for="classId">Class</label>
+          <select id="classId" required></select>
+        </div>
+        <div class="form-row">
+          <label for="parentName">Parent / Guardian Name</label>
+          <input type="text" id="parentName" required />
+        </div>
+        <div class="form-row">
+          <label for="parentPhone">Parent Phone</label>
+          <input type="text" id="parentPhone" />
+        </div>
+        <div class="form-row">
+          <label for="parentEmail">Parent Email</label>
+          <input type="email" id="parentEmail" />
+        </div>
+        <div class="form-row">
+          <label for="enrolledDate">Enrolled Date</label>
+          <input type="date" id="enrolledDate" />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('student-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script>
+    let students = [];
+    let classes = [];
+
+    (async () => {
+      const user = await requireAuth();
+      if (!user) return;
+      renderSidebar('students.html', user);
+      await loadClasses();
+      await loadStudents();
+    })();
+
+    async function loadClasses() {
+      classes = await api('/api/classes');
+      const select = document.getElementById('classId');
+      select.innerHTML = classes.map((c) => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.ageGroup)})</option>`).join('');
+    }
+
+    function className(classId) {
+      const c = classes.find((c) => c.id === Number(classId));
+      return c ? c.name : '—';
+    }
+
+    async function loadStudents() {
+      const wrap = document.getElementById('table-wrap');
+      try {
+        students = await api('/api/students');
+        if (!students.length) {
+          wrap.innerHTML = `<div class="empty-state"><div class="emoji">🧒</div>No students yet. Add your first student!</div>`;
+          return;
+        }
+        wrap.innerHTML = `
+          <table>
+            <thead>
+              <tr><th>Name</th><th>Age</th><th>Class</th><th>Parent</th><th>Contact</th><th>Enrolled</th><th></th></tr>
+            </thead>
+            <tbody>
+              ${students.map((s) => `
+                <tr>
+                  <td><strong>${escapeHtml(s.name)}</strong></td>
+                  <td>${escapeHtml(s.age)}</td>
+                  <td><span class="badge badge-blue">${escapeHtml(className(s.classId))}</span></td>
+                  <td>${escapeHtml(s.parentName)}</td>
+                  <td>${escapeHtml(s.parentPhone || '—')}<br/><span style="color:var(--text);font-size:0.82rem;">${escapeHtml(s.parentEmail || '')}</span></td>
+                  <td>${formatDate(s.enrolledDate)}</td>
+                  <td>
+                    <div class="row-actions">
+                      <button class="icon-btn" title="Edit" onclick="editStudent(${s.id})">✏️</button>
+                      <button class="icon-btn danger" title="Delete" onclick="deleteStudent(${s.id})">🗑️</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (err) {
+        wrap.innerHTML = `<div class="empty-state">Failed to load students.</div>`;
+      }
+    }
+
+    document.getElementById('add-btn').addEventListener('click', () => {
+      document.getElementById('modal-title').textContent = 'Add Student';
+      document.getElementById('student-form').reset();
+      document.getElementById('student-id').value = '';
+      document.getElementById('enrolledDate').value = todayISO();
+      openModal('student-modal');
+    });
+
+    function editStudent(id) {
+      const s = students.find((s) => s.id === id);
+      if (!s) return;
+      document.getElementById('modal-title').textContent = 'Edit Student';
+      document.getElementById('student-id').value = s.id;
+      document.getElementById('name').value = s.name;
+      document.getElementById('age').value = s.age;
+      document.getElementById('classId').value = s.classId;
+      document.getElementById('parentName').value = s.parentName;
+      document.getElementById('parentPhone').value = s.parentPhone || '';
+      document.getElementById('parentEmail').value = s.parentEmail || '';
+      document.getElementById('enrolledDate').value = s.enrolledDate || '';
+      openModal('student-modal');
+    }
+
+    async function deleteStudent(id) {
+      if (!confirm('Remove this student record? This cannot be undone.')) return;
+      try {
+        await api(`/api/students/${id}`, { method: 'DELETE' });
+        showToast('Student removed');
+        await loadStudents();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    document.getElementById('student-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('student-id').value;
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        age: Number(document.getElementById('age').value),
+        classId: Number(document.getElementById('classId').value),
+        parentName: document.getElementById('parentName').value.trim(),
+        parentPhone: document.getElementById('parentPhone').value.trim(),
+        parentEmail: document.getElementById('parentEmail').value.trim(),
+        enrolledDate: document.getElementById('enrolledDate').value,
+      };
+      try {
+        if (id) {
+          await api(`/api/students/${id}`, { method: 'PUT', body: payload });
+          showToast('Student updated');
+        } else {
+          await api('/api/students', { method: 'POST', body: payload });
+          showToast('Student added');
+        }
+        closeModal('student-modal');
+        await loadStudents();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+  </script>
+</body>
+</html>

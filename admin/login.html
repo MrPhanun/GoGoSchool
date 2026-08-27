@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Admin Login — GO-GO International School</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="brand-badge">🎈</div>
+      <h2>GO-GO Admin Panel</h2>
+      <p style="margin-top:-8px;color:var(--text);">Sign in to manage your school</p>
+
+      <form id="login-form" style="text-align:left;margin-top:20px;">
+        <div class="form-row">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" required autofocus />
+        </div>
+        <div class="form-row">
+          <label for="password">Password</label>
+          <input type="password" id="password" name="password" required />
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;">Log In</button>
+        <div id="login-error" class="login-error"></div>
+      </form>
+
+      <div class="login-hint">
+        Demo accounts — Admin: <strong>admin@gogo.edu</strong> / Admin@123<br/>
+        Teacher: <strong>teacher@gogo.edu</strong> / Teacher@123
+      </div>
+      <p style="margin-top:18px;"><a href="../index.html" style="color:var(--blue);font-weight:700;">&larr; Back to website</a></p>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script>
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const errorBox = document.getElementById('login-error');
+      errorBox.classList.remove('show');
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      try {
+        await api('/api/auth/login', { method: 'POST', body: { email, password } });
+        window.location.href = 'dashboard.html';
+      } catch (err) {
+        errorBox.textContent = err.message;
+        errorBox.classList.add('show');
+      }
+    });
+
+    (async () => {
+      try {
+        const { user } = await api('/api/auth/me');
+        if (user) window.location.href = 'dashboard.html';
+      } catch (err) { /* not logged in, stay on page */ }
+    })();
+  </script>
+</body>
+</html>

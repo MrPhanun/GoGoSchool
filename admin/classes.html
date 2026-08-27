@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Classes — GO-GO Admin</title>
+  <link rel="stylesheet" href="css/admin.css" />
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="sidebar"></aside>
+    <main class="main-content">
+      <div class="topbar">
+        <h1>Classes</h1>
+        <button class="btn btn-primary" id="add-btn">+ Add Class</button>
+      </div>
+
+      <div class="panel">
+        <div id="table-wrap">
+          <div class="empty-state">Loading classes…</div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal-overlay" id="class-modal">
+    <div class="modal">
+      <h3 id="modal-title">Add Class</h3>
+      <form id="class-form">
+        <input type="hidden" id="class-id" />
+        <div class="form-row">
+          <label for="name">Class Name</label>
+          <input type="text" id="name" required />
+        </div>
+        <div class="form-row">
+          <label for="ageGroup">Age Group</label>
+          <input type="text" id="ageGroup" placeholder="e.g. 4-5 years" required />
+        </div>
+        <div class="form-row">
+          <label for="teacherId">Teacher</label>
+          <select id="teacherId" required></select>
+        </div>
+        <div class="form-row">
+          <label for="capacity">Capacity</label>
+          <input type="number" id="capacity" min="1" required />
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn btn-outline" onclick="closeModal('class-modal')">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="js/admin.js"></script>
+  <script>
+    let classes = [];
+    let teachers = [];
+    let students = [];
+
+    (async () => {
+      const user = await requireAuth();
+      if (!user) return;
+      renderSidebar('classes.html', user);
+      teachers = await api('/api/teachers');
+      document.getElementById('teacherId').innerHTML = teachers.map((t) => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');
+      students = await api('/api/students');
+      await loadClasses();
+    })();
+
+    function teacherName(id) {
+      const t = teachers.find((t) => t.id === Number(id));
+      return t ? t.name : '—';
+    }
+
+    function enrolledCount(classId) {
+      return students.filter((s) => s.classId === classId).length;
+    }
+
+    async function loadClasses() {
+      const wrap = document.getElementById('table-wrap');
+      try {
+        classes = await api('/api/classes');
+        if (!classes.length) {
+          wrap.innerHTML = `<div class="empty-state"><div class="emoji">🏫</div>No classes yet.</div>`;
+          return;
+        }
+        wrap.innerHTML = `
+          <table>
+            <thead><tr><th>Class</th><th>Age Group</th><th>Teacher</th><th>Enrolled</th><th>Capacity</th><th></th></tr></thead>
+            <tbody>
+              ${classes.map((c) => `
+                <tr>
+                  <td><strong>${escapeHtml(c.name)}</strong></td>
+                  <td>${escapeHtml(c.ageGroup)}</td>
+                  <td>${escapeHtml(teacherName(c.teacherId))}</td>
+                  <td>${enrolledCount(c.id)}</td>
+                  <td>${escapeHtml(c.capacity)}</td>
+                  <td>
+                    <div class="row-actions">
+                      <button class="icon-btn" title="Edit" onclick="editClass(${c.id})">✏️</button>
+                      <button class="icon-btn danger" title="Delete" onclick="deleteClass(${c.id})">🗑️</button>
+                    </div>
+                  </td>
+                </tr>
+              `).join('')}
+            </tbody>
+          </table>
+        `;
+      } catch (err) {
+        wrap.innerHTML = `<div class="empty-state">Failed to load classes.</div>`;
+      }
+    }
+
+    document.getElementById('add-btn').addEventListener('click', () => {
+      document.getElementById('modal-title').textContent = 'Add Class';
+      document.getElementById('class-form').reset();
+      document.getElementById('class-id').value = '';
+      openModal('class-modal');
+    });
+
+    function editClass(id) {
+      const c = classes.find((c) => c.id === id);
+      if (!c) return;
+      document.getElementById('modal-title').textContent = 'Edit Class';
+      document.getElementById('class-id').value = c.id;
+      document.getElementById('name').value = c.name;
+      document.getElementById('ageGroup').value = c.ageGroup;
+      document.getElementById('teacherId').value = c.teacherId;
+      document.getElementById('capacity').value = c.capacity;
+      openModal('class-modal');
+    }
+
+    async function deleteClass(id) {
+      if (!confirm('Delete this class?')) return;
+      try {
+        await api(`/api/classes/${id}`, { method: 'DELETE' });
+        showToast('Class deleted');
+        await loadClasses();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    }
+
+    document.getElementById('class-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = document.getElementById('class-id').value;
+      const payload = {
+        name: document.getElementById('name').value.trim(),
+        ageGroup: document.getElementById('ageGroup').value.trim(),
+        teacherId: Number(document.getElementById('teacherId').value),
+        capacity: Number(document.getElementById('capacity').value),
+      };
+      try {
+        if (id) {
+          await api(`/api/classes/${id}`, { method: 'PUT', body: payload });
+          showToast('Class updated');
+        } else {
+          await api('/api/classes', { method: 'POST', body: payload });
+          showToast('Class added');
+        }
+        closeModal('class-modal');
+        await loadClasses();
+      } catch (err) {
+        showToast(err.message, true);
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact &amp; Enrollment — GO-GO International School</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <nav class="nav">
+      <a href="index.html" class="brand"><span class="brand-badge">🎈</span> GO-GO International School</a>
+      <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+      <ul class="nav-links">
+        <li><a href="index.html" data-page="index.html">Home</a></li>
+        <li><a href="about.html" data-page="about.html">About</a></li>
+        <li><a href="programs.html" data-page="programs.html">Programs</a></li>
+        <li><a href="gallery.html" data-page="gallery.html">Gallery</a></li>
+        <li><a href="staff.html" data-page="staff.html">Staff</a></li>
+        <li><a href="contact.html" data-page="contact.html">Contact</a></li>
+        <li><a href="admin/login.html" class="btn">Admin Login</a></li>
+      </ul>
+    </nav>
+  </header>
+
+  <div class="page-hero">
+    <div class="container">
+      <span class="eyebrow">Get in Touch</span>
+      <h1>Let's start your child's journey</h1>
+    </div>
+  </div>
+
+  <section>
+    <div class="container grid grid-2" style="align-items:flex-start;">
+      <div>
+        <h2>Send an Enrollment Inquiry</h2>
+        <p>Fill out the form and our admissions team will reach out within 1–2 business days.</p>
+        <form id="contact-form" class="form-card">
+          <div class="form-row">
+            <label for="parentName">Parent / Guardian Name</label>
+            <input type="text" id="parentName" name="parentName" required />
+          </div>
+          <div class="form-row">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" name="email" required />
+          </div>
+          <div class="form-row">
+            <label for="phone">Phone Number</label>
+            <input type="tel" id="phone" name="phone" />
+          </div>
+          <div class="form-row">
+            <label for="childAge">Child's Age</label>
+            <input type="text" id="childAge" name="childAge" placeholder="e.g. 4 years old" />
+          </div>
+          <div class="form-row">
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4" required placeholder="Tell us about your child and any questions you have"></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="width:100%;">Submit Inquiry</button>
+          <div id="form-msg" class="form-msg"></div>
+        </form>
+      </div>
+      <div>
+        <h2>Visit or Reach Us</h2>
+        <ul class="info-list" style="margin-top:20px;">
+          <li>
+            <span class="info-icon">📍</span>
+            <span><strong>Address</strong><br/>123 Rainbow Lane, Sunshine City</span>
+          </li>
+          <li>
+            <span class="info-icon">📞</span>
+            <span><strong>Phone</strong><br/>(555) 123-4567</span>
+          </li>
+          <li>
+            <span class="info-icon">✉️</span>
+            <span><strong>Email</strong><br/>hello@gogoschool.edu</span>
+          </li>
+          <li>
+            <span class="info-icon">🕐</span>
+            <span><strong>Office Hours</strong><br/>Mon–Fri, 7:30 AM – 5:00 PM</span>
+          </li>
+        </ul>
+        <div class="blob-card" style="max-width:320px;margin-top:30px;background:linear-gradient(135deg, var(--coral), var(--purple));">🗺️🏫</div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div class="brand" style="color:#fff;"><span class="brand-badge">🎈</span> GO-GO International School</div>
+          <p>A joyful place where curious minds grow, play, and learn together.</p>
+        </div>
+        <div>
+          <h4>Quick Links</h4>
+          <ul style="list-style:none;padding:0;">
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="programs.html">Programs</a></li>
+            <li><a href="gallery.html">Gallery</a></li>
+            <li><a href="contact.html">Contact</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>Contact</h4>
+          <ul style="list-style:none;padding:0;">
+            <li>📍 123 Rainbow Lane, Sunshine City</li>
+            <li>📞 (555) 123-4567</li>
+            <li>✉️ hello@gogoschool.edu</li>
+          </ul>
+        </div>
+      </div>
+      <div class="footer-bottom">&copy; 2026 GO-GO International School. All rights reserved.</div>
+    </div>
+  </footer>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
