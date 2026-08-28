@@ -10,23 +10,29 @@
   <header class="site-header">
     <nav class="nav">
       <a href="index.html" class="brand"><span class="brand-badge">🎈</span> GO-GO International School</a>
-      <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html" data-page="index.html">Home</a></li>
-        <li><a href="about.html" data-page="about.html">About</a></li>
-        <li><a href="programs.html" data-page="programs.html">Programs</a></li>
-        <li><a href="gallery.html" data-page="gallery.html">Gallery</a></li>
-        <li><a href="staff.html" data-page="staff.html">Staff</a></li>
-        <li><a href="contact.html" data-page="contact.html">Contact</a></li>
-        <li><a href="admin/login.html" class="btn">Admin Login</a></li>
-      </ul>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="index.html" data-page="index.html" data-i18n="nav.home">Home</a></li>
+          <li><a href="about.html" data-page="about.html" data-i18n="nav.about">About</a></li>
+          <li><a href="programs.html" data-page="programs.html" data-i18n="nav.programs">Programs</a></li>
+          <li><a href="gallery.html" data-page="gallery.html" data-i18n="nav.gallery">Gallery</a></li>
+          <li><a href="staff.html" data-page="staff.html" data-i18n="nav.staff">Staff</a></li>
+          <li><a href="contact.html" data-page="contact.html" data-i18n="nav.contact">Contact</a></li>
+          <li><a href="admin/login.html" class="btn" data-i18n="nav.adminLogin">Admin Login</a></li>
+        </ul>
+        <div class="nav-controls">
+          <button class="icon-toggle-btn" data-theme-toggle onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+          <button class="icon-toggle-btn" data-lang-toggle onclick="toggleLang()">ខ្មែរ</button>
+        </div>
+        <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+      </div>
     </nav>
   </header>
 
   <div class="page-hero">
     <div class="container">
-      <span class="eyebrow">Life at GO-GO</span>
-      <h1>Moments of joy, curiosity &amp; play</h1>
+      <span class="eyebrow" data-i18n="gallery.eyebrow">Life at GO-GO</span>
+      <h1 data-i18n="gallery.title">Moments of joy, curiosity &amp; play</h1>
     </div>
   </div>
 
@@ -42,7 +48,7 @@
         <div class="gallery-item" style="background:linear-gradient(135deg,var(--coral),var(--yellow));">🧩</div>
         <div class="gallery-item" style="background:linear-gradient(135deg,var(--blue),var(--green));">🏫</div>
       </div>
-      <p style="text-align:center;margin-top:24px;color:var(--text);">Photo gallery coming soon — check back for real snapshots from our classrooms and events!</p>
+      <p style="text-align:center;margin-top:24px;color:var(--text);" data-i18n="gallery.comingSoon">Photo gallery coming soon — check back for real snapshots from our classrooms and events!</p>
     </div>
   </section>
 
@@ -51,30 +57,32 @@
       <div class="footer-grid">
         <div>
           <div class="brand" style="color:#fff;"><span class="brand-badge">🎈</span> GO-GO International School</div>
-          <p>A joyful place where curious minds grow, play, and learn together.</p>
+          <p data-i18n="footer.tagline">A joyful place where curious minds grow, play, and learn together.</p>
         </div>
         <div>
-          <h4>Quick Links</h4>
+          <h4 data-i18n="footer.quickLinks">Quick Links</h4>
           <ul style="list-style:none;padding:0;">
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="programs.html">Programs</a></li>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="about.html" data-i18n="footer.aboutUs">About Us</a></li>
+            <li><a href="programs.html" data-i18n="footer.programsLink">Programs</a></li>
+            <li><a href="gallery.html" data-i18n="footer.galleryLink">Gallery</a></li>
+            <li><a href="contact.html" data-i18n="footer.contactLink">Contact</a></li>
           </ul>
         </div>
         <div>
-          <h4>Contact</h4>
+          <h4 data-i18n="footer.contactHeading">Contact</h4>
           <ul style="list-style:none;padding:0;">
-            <li>📍 123 Rainbow Lane, Sunshine City</li>
+            <li>📍 <span data-i18n="footer.address">123 Rainbow Lane, Sunshine City</span></li>
             <li>📞 (555) 123-4567</li>
             <li>✉️ hello@gogoschool.edu</li>
           </ul>
         </div>
       </div>
-      <div class="footer-bottom">&copy; 2026 GO-GO International School. All rights reserved.</div>
+      <div class="footer-bottom" data-i18n="footer.copyright">&copy; 2026 GO-GO International School. All rights reserved.</div>
     </div>
   </footer>
 
+  <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

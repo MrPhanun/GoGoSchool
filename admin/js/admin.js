@@ -1,12 +1,12 @@
 const NAV_ITEMS = [
-  { page: 'dashboard.html', icon: '🏠', label: 'Dashboard' },
-  { page: 'students.html', icon: '🧒', label: 'Students' },
-  { page: 'classes.html', icon: '🏫', label: 'Classes' },
-  { page: 'teachers.html', icon: '👩‍🏫', label: 'Teachers' },
-  { page: 'attendance.html', icon: '📋', label: 'Attendance' },
-  { page: 'fees.html', icon: '💰', label: 'Fees' },
-  { page: 'announcements.html', icon: '📣', label: 'Announcements' },
-  { page: 'inquiries.html', icon: '✉️', label: 'Inquiries' },
+  { page: 'dashboard.html', icon: '🏠', key: 'admin.nav.dashboard', label: 'Dashboard' },
+  { page: 'students.html', icon: '🧒', key: 'admin.nav.students', label: 'Students' },
+  { page: 'classes.html', icon: '🏫', key: 'admin.nav.classes', label: 'Classes' },
+  { page: 'teachers.html', icon: '👩‍🏫', key: 'admin.nav.teachers', label: 'Teachers' },
+  { page: 'attendance.html', icon: '📋', key: 'admin.nav.attendance', label: 'Attendance' },
+  { page: 'fees.html', icon: '💰', key: 'admin.nav.fees', label: 'Fees' },
+  { page: 'announcements.html', icon: '📣', key: 'admin.nav.announcements', label: 'Announcements' },
+  { page: 'inquiries.html', icon: '✉️', key: 'admin.nav.inquiries', label: 'Inquiries' },
 ];
 
 async function api(path, opts = {}) {
@@ -44,7 +44,7 @@ function renderSidebar(activePage, user) {
   const links = NAV_ITEMS.map((item) => `
     <li>
       <a href="${item.page}" class="${item.page === activePage ? 'active' : ''}">
-        <span>${item.icon}</span> ${item.label}
+        <span>${item.icon}</span> <span data-i18n="${item.key}">${item.label}</span>
       </a>
     </li>
   `).join('');
@@ -57,9 +57,13 @@ function renderSidebar(activePage, user) {
     <div class="sidebar-footer">
       <div class="sidebar-footer-info">
         <div class="user-name">${escapeHtml(user.name)}</div>
-        <span class="role-badge">${escapeHtml(user.role)}</span>
+        <span class="role-badge" data-i18n="admin.role.${user.role}">${escapeHtml(user.role)}</span>
       </div>
-      <button class="logout-btn" id="logout-btn">Log Out</button>
+      <div class="sidebar-toggles">
+        <button class="icon-toggle-btn" data-theme-toggle onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+        <button class="icon-toggle-btn" data-lang-toggle onclick="toggleLang()">ខ្មែរ</button>
+      </div>
+      <button class="logout-btn" id="logout-btn" data-i18n="admin.logout">Log Out</button>
     </div>
   `;
 
@@ -67,6 +71,8 @@ function renderSidebar(activePage, user) {
     await api('/api/auth/logout', { method: 'POST' });
     window.location.href = 'login.html';
   });
+
+  if (typeof window.applyLang === 'function') window.applyLang();
 }
 
 function showToast(message, isError = false) {

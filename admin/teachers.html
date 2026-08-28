@@ -11,13 +11,13 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main class="main-content">
       <div class="topbar">
-        <h1>Teachers</h1>
-        <button class="btn btn-primary" id="add-btn">+ Add Teacher</button>
+        <h1 data-i18n="teachers.title">Teachers</h1>
+        <button class="btn btn-primary" id="add-btn" data-i18n="teachers.addBtn">+ Add Teacher</button>
       </div>
 
       <div class="panel">
         <div id="table-wrap">
-          <div class="empty-state">Loading teachers…</div>
+          <div class="empty-state" data-i18n="teachers.loading">Loading teachers…</div>
         </div>
       </div>
     </main>
@@ -25,33 +25,35 @@
 
   <div class="modal-overlay" id="teacher-modal">
     <div class="modal">
-      <h3 id="modal-title">Add Teacher</h3>
+      <h3 id="modal-title" data-i18n="teachers.modalAddTitle">Add Teacher</h3>
       <form id="teacher-form">
         <input type="hidden" id="teacher-id" />
         <div class="form-row">
-          <label for="name">Full Name</label>
+          <label for="name" data-i18n="teachers.labelName">Full Name</label>
           <input type="text" id="name" required />
         </div>
         <div class="form-row">
-          <label for="subject">Specialty / Subject</label>
+          <label for="subject" data-i18n="teachers.labelSubject">Specialty / Subject</label>
           <input type="text" id="subject" required />
         </div>
         <div class="form-row">
-          <label for="email">Email</label>
+          <label for="email" data-i18n="teachers.labelEmail">Email</label>
           <input type="email" id="email" required />
         </div>
         <div class="form-row">
-          <label for="phone">Phone</label>
+          <label for="phone" data-i18n="teachers.labelPhone">Phone</label>
           <input type="text" id="phone" />
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn btn-outline" onclick="closeModal('teacher-modal')">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-outline" onclick="closeModal('teacher-modal')" data-i18n="common.cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-i18n="common.saveBtn">Save</button>
         </div>
       </form>
     </div>
   </div>
 
+  <script src="../js/theme.js"></script>
+  <script src="../js/i18n.js"></script>
   <script src="js/admin.js"></script>
   <script>
     let teachers = [];
@@ -61,6 +63,7 @@
       if (!user) return;
       renderSidebar('teachers.html', user);
       await loadTeachers();
+      window.onLangChange = loadTeachers;
     })();
 
     async function loadTeachers() {
@@ -68,23 +71,23 @@
       try {
         teachers = await api('/api/teachers');
         if (!teachers.length) {
-          wrap.innerHTML = `<div class="empty-state"><div class="emoji">👩‍🏫</div>No teachers yet.</div>`;
+          wrap.innerHTML = `<div class="empty-state"><div class="emoji">👩‍🏫</div>${t('teachers.empty')}</div>`;
           return;
         }
         wrap.innerHTML = `
           <table>
-            <thead><tr><th>Name</th><th>Specialty</th><th>Email</th><th>Phone</th><th></th></tr></thead>
+            <thead><tr><th>${t('teachers.thName')}</th><th>${t('teachers.thSpecialty')}</th><th>${t('teachers.thEmail')}</th><th>${t('teachers.thPhone')}</th><th></th></tr></thead>
             <tbody>
-              ${teachers.map((t) => `
+              ${teachers.map((tc) => `
                 <tr>
-                  <td><strong>${escapeHtml(t.name)}</strong></td>
-                  <td>${escapeHtml(t.subject)}</td>
-                  <td>${escapeHtml(t.email)}</td>
-                  <td>${escapeHtml(t.phone || '—')}</td>
+                  <td><strong>${escapeHtml(tc.name)}</strong></td>
+                  <td>${escapeHtml(tc.subject)}</td>
+                  <td>${escapeHtml(tc.email)}</td>
+                  <td>${escapeHtml(tc.phone || '—')}</td>
                   <td>
                     <div class="row-actions">
-                      <button class="icon-btn" title="Edit" onclick="editTeacher(${t.id})">✏️</button>
-                      <button class="icon-btn danger" title="Delete" onclick="deleteTeacher(${t.id})">🗑️</button>
+                      <button class="icon-btn" title="Edit" onclick="editTeacher(${tc.id})">✏️</button>
+                      <button class="icon-btn danger" title="Delete" onclick="deleteTeacher(${tc.id})">🗑️</button>
                     </div>
                   </td>
                 </tr>
@@ -93,34 +96,34 @@
           </table>
         `;
       } catch (err) {
-        wrap.innerHTML = `<div class="empty-state">Failed to load teachers.</div>`;
+        wrap.innerHTML = `<div class="empty-state">${t('teachers.loadError')}</div>`;
       }
     }
 
     document.getElementById('add-btn').addEventListener('click', () => {
-      document.getElementById('modal-title').textContent = 'Add Teacher';
+      document.getElementById('modal-title').textContent = t('teachers.modalAddTitle');
       document.getElementById('teacher-form').reset();
       document.getElementById('teacher-id').value = '';
       openModal('teacher-modal');
     });
 
     function editTeacher(id) {
-      const t = teachers.find((t) => t.id === id);
-      if (!t) return;
-      document.getElementById('modal-title').textContent = 'Edit Teacher';
-      document.getElementById('teacher-id').value = t.id;
-      document.getElementById('name').value = t.name;
-      document.getElementById('subject').value = t.subject;
-      document.getElementById('email').value = t.email;
-      document.getElementById('phone').value = t.phone || '';
+      const tc = teachers.find((tc) => tc.id === id);
+      if (!tc) return;
+      document.getElementById('modal-title').textContent = t('teachers.modalEditTitle');
+      document.getElementById('teacher-id').value = tc.id;
+      document.getElementById('name').value = tc.name;
+      document.getElementById('subject').value = tc.subject;
+      document.getElementById('email').value = tc.email;
+      document.getElementById('phone').value = tc.phone || '';
       openModal('teacher-modal');
     }
 
     async function deleteTeacher(id) {
-      if (!confirm('Remove this teacher?')) return;
+      if (!confirm(t('teachers.confirmDelete'))) return;
       try {
         await api(`/api/teachers/${id}`, { method: 'DELETE' });
-        showToast('Teacher removed');
+        showToast(t('teachers.toastDeleted'));
         await loadTeachers();
       } catch (err) {
         showToast(err.message, true);
@@ -139,10 +142,10 @@
       try {
         if (id) {
           await api(`/api/teachers/${id}`, { method: 'PUT', body: payload });
-          showToast('Teacher updated');
+          showToast(t('teachers.toastUpdated'));
         } else {
           await api('/api/teachers', { method: 'POST', body: payload });
-          showToast('Teacher added');
+          showToast(t('teachers.toastAdded'));
         }
         closeModal('teacher-modal');
         await loadTeachers();

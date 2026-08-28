@@ -12,6 +12,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadAnnouncements();
   setupContactForm();
+  window.onLangChange = loadAnnouncements;
 });
 
 async function loadAnnouncements() {
@@ -21,7 +22,7 @@ async function loadAnnouncements() {
     const res = await fetch('/api/public/announcements');
     const data = await res.json();
     if (!data.length) {
-      list.innerHTML = '<p>No announcements right now — check back soon!</p>';
+      list.innerHTML = `<p>${t('home.announceEmpty')}</p>`;
       return;
     }
     list.innerHTML = data.slice(0, 4).map((a) => `
@@ -32,7 +33,7 @@ async function loadAnnouncements() {
       </div>
     `).join('');
   } catch (err) {
-    list.innerHTML = '<p>Announcements are unavailable right now.</p>';
+    list.innerHTML = `<p>${t('home.announceError')}</p>`;
   }
 }
 
@@ -63,7 +64,7 @@ function setupContactForm() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Something went wrong');
       msg.className = 'form-msg success';
-      msg.textContent = "Thank you! We've received your message and will get back to you soon.";
+      msg.textContent = t('contact.successMsg');
       form.reset();
     } catch (err) {
       msg.className = 'form-msg error';

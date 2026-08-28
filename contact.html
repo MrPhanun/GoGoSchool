@@ -10,74 +10,80 @@
   <header class="site-header">
     <nav class="nav">
       <a href="index.html" class="brand"><span class="brand-badge">🎈</span> GO-GO International School</a>
-      <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html" data-page="index.html">Home</a></li>
-        <li><a href="about.html" data-page="about.html">About</a></li>
-        <li><a href="programs.html" data-page="programs.html">Programs</a></li>
-        <li><a href="gallery.html" data-page="gallery.html">Gallery</a></li>
-        <li><a href="staff.html" data-page="staff.html">Staff</a></li>
-        <li><a href="contact.html" data-page="contact.html">Contact</a></li>
-        <li><a href="admin/login.html" class="btn">Admin Login</a></li>
-      </ul>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="index.html" data-page="index.html" data-i18n="nav.home">Home</a></li>
+          <li><a href="about.html" data-page="about.html" data-i18n="nav.about">About</a></li>
+          <li><a href="programs.html" data-page="programs.html" data-i18n="nav.programs">Programs</a></li>
+          <li><a href="gallery.html" data-page="gallery.html" data-i18n="nav.gallery">Gallery</a></li>
+          <li><a href="staff.html" data-page="staff.html" data-i18n="nav.staff">Staff</a></li>
+          <li><a href="contact.html" data-page="contact.html" data-i18n="nav.contact">Contact</a></li>
+          <li><a href="admin/login.html" class="btn" data-i18n="nav.adminLogin">Admin Login</a></li>
+        </ul>
+        <div class="nav-controls">
+          <button class="icon-toggle-btn" data-theme-toggle onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+          <button class="icon-toggle-btn" data-lang-toggle onclick="toggleLang()">ខ្មែរ</button>
+        </div>
+        <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+      </div>
     </nav>
   </header>
 
   <div class="page-hero">
     <div class="container">
-      <span class="eyebrow">Get in Touch</span>
-      <h1>Let's start your child's journey</h1>
+      <span class="eyebrow" data-i18n="contact.eyebrow">Get in Touch</span>
+      <h1 data-i18n="contact.title">Let's start your child's journey</h1>
     </div>
   </div>
 
   <section>
     <div class="container grid grid-2" style="align-items:flex-start;">
       <div>
-        <h2>Send an Enrollment Inquiry</h2>
-        <p>Fill out the form and our admissions team will reach out within 1–2 business days.</p>
+        <h2 data-i18n="contact.formTitle">Send an Enrollment Inquiry</h2>
+        <p data-i18n="contact.formDesc">Fill out the form and our admissions team will reach out within 1–2 business days.</p>
         <form id="contact-form" class="form-card">
           <div class="form-row">
-            <label for="parentName">Parent / Guardian Name</label>
+            <label for="parentName" data-i18n="contact.labelParent">Parent / Guardian Name</label>
             <input type="text" id="parentName" name="parentName" required />
           </div>
           <div class="form-row">
-            <label for="email">Email Address</label>
+            <label for="email" data-i18n="contact.labelEmail">Email Address</label>
             <input type="email" id="email" name="email" required />
           </div>
           <div class="form-row">
-            <label for="phone">Phone Number</label>
+            <label for="phone" data-i18n="contact.labelPhone">Phone Number</label>
             <input type="tel" id="phone" name="phone" />
           </div>
           <div class="form-row">
-            <label for="childAge">Child's Age</label>
-            <input type="text" id="childAge" name="childAge" placeholder="e.g. 4 years old" />
+            <label for="childAge" data-i18n="contact.labelChildAge">Child's Age</label>
+            <input type="text" id="childAge" name="childAge" data-i18n-placeholder="contact.placeholderChildAge" placeholder="e.g. 4 years old" />
           </div>
           <div class="form-row">
-            <label for="message">Message</label>
-            <textarea id="message" name="message" rows="4" required placeholder="Tell us about your child and any questions you have"></textarea>
+            <label for="message" data-i18n="contact.labelMessage">Message</label>
+            <textarea id="message" name="message" rows="4" required data-i18n-placeholder="contact.placeholderMessage" placeholder="Tell us about your child and any questions you have"></textarea>
           </div>
-          <button type="submit" class="btn btn-primary" style="width:100%;">Submit Inquiry</button>
+          <button type="submit" class="btn btn-primary" style="width:100%;" data-i18n="contact.submitBtn">Submit Inquiry</button>
           <div id="form-msg" class="form-msg"></div>
         </form>
       </div>
       <div>
-        <h2>Visit or Reach Us</h2>
+        <h2 data-i18n="contact.visitTitle">Visit or Reach Us</h2>
         <ul class="info-list" style="margin-top:20px;">
           <li>
             <span class="info-icon">📍</span>
-            <span><strong>Address</strong><br/>123 Rainbow Lane, Sunshine City</span>
+            <span><strong data-i18n="contact.addressLabel">Address</strong><br/><span data-i18n="footer.address">123 Rainbow Lane, Sunshine City</span></span>
           </li>
           <li>
             <span class="info-icon">📞</span>
-            <span><strong>Phone</strong><br/>(555) 123-4567</span>
+            <span><strong data-i18n="contact.phoneLabel">Phone</strong><br/>(555) 123-4567</span>
           </li>
           <li>
             <span class="info-icon">✉️</span>
-            <span><strong>Email</strong><br/>hello@gogoschool.edu</span>
+            <span><strong data-i18n="contact.emailLabel">Email</strong><br/>hello@gogoschool.edu</span>
           </li>
           <li>
             <span class="info-icon">🕐</span>
-            <span><strong>Office Hours</strong><br/>Mon–Fri, 7:30 AM – 5:00 PM</span>
+            <span><strong data-i18n="contact.hoursLabel">Office Hours</strong><br/><span data-i18n="contact.hoursValue">Mon–Fri, 7:30 AM – 5:00 PM</span></span>
           </li>
         </ul>
         <div class="blob-card" style="max-width:320px;margin-top:30px;background:linear-gradient(135deg, var(--coral), var(--purple));">🗺️🏫</div>
@@ -90,30 +96,32 @@
       <div class="footer-grid">
         <div>
           <div class="brand" style="color:#fff;"><span class="brand-badge">🎈</span> GO-GO International School</div>
-          <p>A joyful place where curious minds grow, play, and learn together.</p>
+          <p data-i18n="footer.tagline">A joyful place where curious minds grow, play, and learn together.</p>
         </div>
         <div>
-          <h4>Quick Links</h4>
+          <h4 data-i18n="footer.quickLinks">Quick Links</h4>
           <ul style="list-style:none;padding:0;">
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="programs.html">Programs</a></li>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="about.html" data-i18n="footer.aboutUs">About Us</a></li>
+            <li><a href="programs.html" data-i18n="footer.programsLink">Programs</a></li>
+            <li><a href="gallery.html" data-i18n="footer.galleryLink">Gallery</a></li>
+            <li><a href="contact.html" data-i18n="footer.contactLink">Contact</a></li>
           </ul>
         </div>
         <div>
-          <h4>Contact</h4>
+          <h4 data-i18n="footer.contactHeading">Contact</h4>
           <ul style="list-style:none;padding:0;">
-            <li>📍 123 Rainbow Lane, Sunshine City</li>
+            <li>📍 <span data-i18n="footer.address">123 Rainbow Lane, Sunshine City</span></li>
             <li>📞 (555) 123-4567</li>
             <li>✉️ hello@gogoschool.edu</li>
           </ul>
         </div>
       </div>
-      <div class="footer-bottom">&copy; 2026 GO-GO International School. All rights reserved.</div>
+      <div class="footer-bottom" data-i18n="footer.copyright">&copy; 2026 GO-GO International School. All rights reserved.</div>
     </div>
   </footer>
 
+  <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>
