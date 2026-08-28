@@ -11,17 +11,19 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main class="main-content">
       <div class="topbar">
-        <h1>Enrollment Inquiries</h1>
+        <h1 data-i18n="inquiries.title">Enrollment Inquiries</h1>
       </div>
 
       <div class="panel">
         <div id="table-wrap">
-          <div class="empty-state">Loading inquiries…</div>
+          <div class="empty-state" data-i18n="inquiries.loading">Loading inquiries…</div>
         </div>
       </div>
     </main>
   </div>
 
+  <script src="../js/theme.js"></script>
+  <script src="../js/i18n.js"></script>
   <script src="js/admin.js"></script>
   <script>
     let inquiries = [];
@@ -31,6 +33,7 @@
       if (!user) return;
       renderSidebar('inquiries.html', user);
       await loadInquiries();
+      window.onLangChange = loadInquiries;
     })();
 
     async function loadInquiries() {
@@ -38,12 +41,12 @@
       try {
         inquiries = (await api('/api/inquiries')).sort((a, b) => new Date(b.submittedAt) - new Date(a.submittedAt));
         if (!inquiries.length) {
-          wrap.innerHTML = `<div class="empty-state"><div class="emoji">✉️</div>No inquiries submitted yet.</div>`;
+          wrap.innerHTML = `<div class="empty-state"><div class="emoji">✉️</div>${t('inquiries.empty')}</div>`;
           return;
         }
         wrap.innerHTML = `
           <table>
-            <thead><tr><th>Parent</th><th>Contact</th><th>Child Age</th><th>Message</th><th>Received</th><th>Status</th><th></th></tr></thead>
+            <thead><tr><th>${t('inquiries.thParent')}</th><th>${t('inquiries.thContact')}</th><th>${t('inquiries.thChildAge')}</th><th>${t('inquiries.thMessage')}</th><th>${t('inquiries.thReceived')}</th><th>${t('inquiries.thStatus')}</th><th></th></tr></thead>
             <tbody>
               ${inquiries.map((i) => `
                 <tr>
@@ -52,7 +55,7 @@
                   <td>${escapeHtml(i.childAge || '—')}</td>
                   <td style="max-width:280px;">${escapeHtml(i.message)}</td>
                   <td>${formatDate(i.submittedAt)}</td>
-                  <td><span class="badge ${i.status === 'new' ? 'badge-yellow' : 'badge-green'}">${escapeHtml(i.status)}</span></td>
+                  <td><span class="badge ${i.status === 'new' ? 'badge-yellow' : 'badge-green'}">${i.status === 'new' ? t('inquiries.statusNew') : t('inquiries.statusReviewed')}</span></td>
                   <td>
                     <div class="row-actions">
                       ${i.status === 'new' ? `<button class="icon-btn" title="Mark Reviewed" onclick="markReviewed(${i.id})">✅</button>` : ''}
@@ -65,14 +68,14 @@
           </table>
         `;
       } catch (err) {
-        wrap.innerHTML = `<div class="empty-state">Failed to load inquiries.</div>`;
+        wrap.innerHTML = `<div class="empty-state">${t('inquiries.loadError')}</div>`;
       }
     }
 
     async function markReviewed(id) {
       try {
         await api(`/api/inquiries/${id}`, { method: 'PUT', body: { status: 'reviewed' } });
-        showToast('Marked as reviewed');
+        showToast(t('inquiries.toastReviewed'));
         await loadInquiries();
       } catch (err) {
         showToast(err.message, true);
@@ -80,10 +83,10 @@
     }
 
     async function deleteInquiry(id) {
-      if (!confirm('Delete this inquiry?')) return;
+      if (!confirm(t('inquiries.confirmDelete'))) return;
       try {
         await api(`/api/inquiries/${id}`, { method: 'DELETE' });
-        showToast('Inquiry deleted');
+        showToast(t('inquiries.toastDeleted'));
         await loadInquiries();
       } catch (err) {
         showToast(err.message, true);

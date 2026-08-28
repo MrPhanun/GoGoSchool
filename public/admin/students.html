@@ -11,13 +11,13 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main class="main-content">
       <div class="topbar">
-        <h1>Students</h1>
-        <button class="btn btn-primary" id="add-btn">+ Add Student</button>
+        <h1 data-i18n="students.title">Students</h1>
+        <button class="btn btn-primary" id="add-btn" data-i18n="students.addBtn">+ Add Student</button>
       </div>
 
       <div class="panel">
         <div id="table-wrap">
-          <div class="empty-state">Loading students…</div>
+          <div class="empty-state" data-i18n="students.loading">Loading students…</div>
         </div>
       </div>
     </main>
@@ -25,45 +25,47 @@
 
   <div class="modal-overlay" id="student-modal">
     <div class="modal">
-      <h3 id="modal-title">Add Student</h3>
+      <h3 id="modal-title" data-i18n="students.modalAddTitle">Add Student</h3>
       <form id="student-form">
         <input type="hidden" id="student-id" />
         <div class="form-row">
-          <label for="name">Full Name</label>
+          <label for="name" data-i18n="students.labelName">Full Name</label>
           <input type="text" id="name" required />
         </div>
         <div class="form-row">
-          <label for="age">Age</label>
+          <label for="age" data-i18n="students.labelAge">Age</label>
           <input type="number" id="age" min="1" max="12" required />
         </div>
         <div class="form-row">
-          <label for="classId">Class</label>
+          <label for="classId" data-i18n="students.labelClass">Class</label>
           <select id="classId" required></select>
         </div>
         <div class="form-row">
-          <label for="parentName">Parent / Guardian Name</label>
+          <label for="parentName" data-i18n="students.labelParentName">Parent / Guardian Name</label>
           <input type="text" id="parentName" required />
         </div>
         <div class="form-row">
-          <label for="parentPhone">Parent Phone</label>
+          <label for="parentPhone" data-i18n="students.labelParentPhone">Parent Phone</label>
           <input type="text" id="parentPhone" />
         </div>
         <div class="form-row">
-          <label for="parentEmail">Parent Email</label>
+          <label for="parentEmail" data-i18n="students.labelParentEmail">Parent Email</label>
           <input type="email" id="parentEmail" />
         </div>
         <div class="form-row">
-          <label for="enrolledDate">Enrolled Date</label>
+          <label for="enrolledDate" data-i18n="students.labelEnrolledDate">Enrolled Date</label>
           <input type="date" id="enrolledDate" />
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn btn-outline" onclick="closeModal('student-modal')">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-outline" onclick="closeModal('student-modal')" data-i18n="common.cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-i18n="common.saveBtn">Save</button>
         </div>
       </form>
     </div>
   </div>
 
+  <script src="../js/theme.js"></script>
+  <script src="../js/i18n.js"></script>
   <script src="js/admin.js"></script>
   <script>
     let students = [];
@@ -75,12 +77,15 @@
       renderSidebar('students.html', user);
       await loadClasses();
       await loadStudents();
+      window.onLangChange = async () => { await loadClasses(); await loadStudents(); };
     })();
 
     async function loadClasses() {
       classes = await api('/api/classes');
       const select = document.getElementById('classId');
+      const current = select.value;
       select.innerHTML = classes.map((c) => `<option value="${c.id}">${escapeHtml(c.name)} (${escapeHtml(c.ageGroup)})</option>`).join('');
+      if (current) select.value = current;
     }
 
     function className(classId) {
@@ -93,13 +98,13 @@
       try {
         students = await api('/api/students');
         if (!students.length) {
-          wrap.innerHTML = `<div class="empty-state"><div class="emoji">🧒</div>No students yet. Add your first student!</div>`;
+          wrap.innerHTML = `<div class="empty-state"><div class="emoji">🧒</div>${t('students.empty')}</div>`;
           return;
         }
         wrap.innerHTML = `
           <table>
             <thead>
-              <tr><th>Name</th><th>Age</th><th>Class</th><th>Parent</th><th>Contact</th><th>Enrolled</th><th></th></tr>
+              <tr><th>${t('students.thName')}</th><th>${t('students.thAge')}</th><th>${t('students.thClass')}</th><th>${t('students.thParent')}</th><th>${t('students.thContact')}</th><th>${t('students.thEnrolled')}</th><th></th></tr>
             </thead>
             <tbody>
               ${students.map((s) => `
@@ -122,12 +127,12 @@
           </table>
         `;
       } catch (err) {
-        wrap.innerHTML = `<div class="empty-state">Failed to load students.</div>`;
+        wrap.innerHTML = `<div class="empty-state">${t('students.loadError')}</div>`;
       }
     }
 
     document.getElementById('add-btn').addEventListener('click', () => {
-      document.getElementById('modal-title').textContent = 'Add Student';
+      document.getElementById('modal-title').textContent = t('students.modalAddTitle');
       document.getElementById('student-form').reset();
       document.getElementById('student-id').value = '';
       document.getElementById('enrolledDate').value = todayISO();
@@ -137,7 +142,7 @@
     function editStudent(id) {
       const s = students.find((s) => s.id === id);
       if (!s) return;
-      document.getElementById('modal-title').textContent = 'Edit Student';
+      document.getElementById('modal-title').textContent = t('students.modalEditTitle');
       document.getElementById('student-id').value = s.id;
       document.getElementById('name').value = s.name;
       document.getElementById('age').value = s.age;
@@ -150,10 +155,10 @@
     }
 
     async function deleteStudent(id) {
-      if (!confirm('Remove this student record? This cannot be undone.')) return;
+      if (!confirm(t('students.confirmDelete'))) return;
       try {
         await api(`/api/students/${id}`, { method: 'DELETE' });
-        showToast('Student removed');
+        showToast(t('students.toastDeleted'));
         await loadStudents();
       } catch (err) {
         showToast(err.message, true);
@@ -175,10 +180,10 @@
       try {
         if (id) {
           await api(`/api/students/${id}`, { method: 'PUT', body: payload });
-          showToast('Student updated');
+          showToast(t('students.toastUpdated'));
         } else {
           await api('/api/students', { method: 'POST', body: payload });
-          showToast('Student added');
+          showToast(t('students.toastAdded'));
         }
         closeModal('student-modal');
         await loadStudents();

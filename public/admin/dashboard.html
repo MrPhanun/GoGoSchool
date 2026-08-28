@@ -11,38 +11,44 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main class="main-content">
       <div class="topbar">
-        <h1>Dashboard</h1>
+        <h1 data-i18n="dashboard.title">Dashboard</h1>
       </div>
 
       <div class="stat-grid" id="stat-grid">
-        <div class="empty-state">Loading dashboard…</div>
+        <div class="empty-state" data-i18n="dashboard.loading">Loading dashboard…</div>
       </div>
 
       <div class="panel">
         <div class="panel-head">
-          <h3>Quick Overview</h3>
+          <h3 data-i18n="dashboard.overviewTitle">Quick Overview</h3>
         </div>
-        <p>Welcome back! Use the sidebar to manage students, classes, teachers, attendance, fees, announcements, and enrollment inquiries.</p>
+        <p data-i18n="dashboard.overviewDesc">Welcome back! Use the sidebar to manage students, classes, teachers, attendance, fees, announcements, and enrollment inquiries.</p>
       </div>
     </main>
   </div>
 
+  <script src="../js/theme.js"></script>
+  <script src="../js/i18n.js"></script>
   <script src="js/admin.js"></script>
   <script>
     (async () => {
       const user = await requireAuth();
       if (!user) return;
       renderSidebar('dashboard.html', user);
+      await loadStats();
+      window.onLangChange = loadStats;
+    })();
 
+    async function loadStats() {
       try {
         const stats = await api('/api/dashboard');
         const cards = [
-          { icon: '🧒', tint: 'var(--coral)', num: stats.totalStudents, label: 'Total Students' },
-          { icon: '🏫', tint: 'var(--blue)', num: stats.totalClasses, label: 'Classes' },
-          { icon: '👩‍🏫', tint: 'var(--purple)', num: stats.totalTeachers, label: 'Teachers' },
-          { icon: '✅', tint: 'var(--green)', num: `${stats.presentToday}/${stats.attendanceMarkedToday}`, label: 'Present Today' },
-          { icon: '💰', tint: '#E07A00', num: stats.unpaidFees, label: 'Unpaid Fees' },
-          { icon: '✉️', tint: '#C0392B', num: stats.newInquiries, label: 'New Inquiries' },
+          { icon: '🧒', tint: 'var(--coral)', num: stats.totalStudents, label: t('dashboard.totalStudents') },
+          { icon: '🏫', tint: 'var(--blue)', num: stats.totalClasses, label: t('dashboard.classes') },
+          { icon: '👩‍🏫', tint: 'var(--purple)', num: stats.totalTeachers, label: t('dashboard.teachers') },
+          { icon: '✅', tint: 'var(--green)', num: `${stats.presentToday}/${stats.attendanceMarkedToday}`, label: t('dashboard.presentToday') },
+          { icon: '💰', tint: 'var(--gold)', num: stats.unpaidFees, label: t('dashboard.unpaidFees') },
+          { icon: '✉️', tint: 'var(--coral)', num: stats.newInquiries, label: t('dashboard.newInquiries') },
         ];
         document.getElementById('stat-grid').innerHTML = cards.map((c) => `
           <div class="stat-card">
@@ -54,9 +60,9 @@
           </div>
         `).join('');
       } catch (err) {
-        document.getElementById('stat-grid').innerHTML = `<div class="empty-state">Could not load dashboard stats.</div>`;
+        document.getElementById('stat-grid').innerHTML = `<div class="empty-state">${t('dashboard.loadError')}</div>`;
       }
-    })();
+    }
   </script>
 </body>
 </html>

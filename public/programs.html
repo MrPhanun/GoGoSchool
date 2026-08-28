@@ -10,23 +10,29 @@
   <header class="site-header">
     <nav class="nav">
       <a href="index.html" class="brand"><span class="brand-badge">🎈</span> GO-GO International School</a>
-      <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
-      <ul class="nav-links">
-        <li><a href="index.html" data-page="index.html">Home</a></li>
-        <li><a href="about.html" data-page="about.html">About</a></li>
-        <li><a href="programs.html" data-page="programs.html">Programs</a></li>
-        <li><a href="gallery.html" data-page="gallery.html">Gallery</a></li>
-        <li><a href="staff.html" data-page="staff.html">Staff</a></li>
-        <li><a href="contact.html" data-page="contact.html">Contact</a></li>
-        <li><a href="admin/login.html" class="btn">Admin Login</a></li>
-      </ul>
+      <div class="nav-right">
+        <ul class="nav-links">
+          <li><a href="index.html" data-page="index.html" data-i18n="nav.home">Home</a></li>
+          <li><a href="about.html" data-page="about.html" data-i18n="nav.about">About</a></li>
+          <li><a href="programs.html" data-page="programs.html" data-i18n="nav.programs">Programs</a></li>
+          <li><a href="gallery.html" data-page="gallery.html" data-i18n="nav.gallery">Gallery</a></li>
+          <li><a href="staff.html" data-page="staff.html" data-i18n="nav.staff">Staff</a></li>
+          <li><a href="contact.html" data-page="contact.html" data-i18n="nav.contact">Contact</a></li>
+          <li><a href="admin/login.html" class="btn" data-i18n="nav.adminLogin">Admin Login</a></li>
+        </ul>
+        <div class="nav-controls">
+          <button class="icon-toggle-btn" data-theme-toggle onclick="toggleTheme()" aria-label="Toggle dark mode">🌙</button>
+          <button class="icon-toggle-btn" data-lang-toggle onclick="toggleLang()">ខ្មែរ</button>
+        </div>
+        <button class="nav-toggle" aria-label="Toggle navigation">☰</button>
+      </div>
     </nav>
   </header>
 
   <div class="page-hero">
     <div class="container">
-      <span class="eyebrow">Learning Programs</span>
-      <h1>A program for every age &amp; stage</h1>
+      <span class="eyebrow" data-i18n="programs.eyebrow">Learning Programs</span>
+      <h1 data-i18n="programs.title">A program for every age &amp; stage</h1>
     </div>
   </div>
 
@@ -34,32 +40,32 @@
     <div class="container grid grid-3">
       <div class="card">
         <div class="icon-circle tint-yellow" style="color:#fff;">🌻</div>
-        <h3>Sunflower Room</h3>
-        <p><strong>Ages 2–3</strong> · Gentle routines, sensory play, and first steps toward independence.</p>
+        <h3 data-i18n="programs.room1Title">Sunflower Room</h3>
+        <p><strong data-i18n="programs.room1Age">Ages 2–3</strong> · <span data-i18n="programs.room1Desc">Gentle routines, sensory play, and first steps toward independence.</span></p>
         <ul class="info-list" style="margin-top:14px;">
-          <li>🧸 Sensory &amp; motor skill play</li>
-          <li>🗣️ Early language building</li>
-          <li>😴 Structured rest &amp; snack times</li>
+          <li data-i18n="programs.room1Li1">🧸 Sensory &amp; motor skill play</li>
+          <li data-i18n="programs.room1Li2">🗣️ Early language building</li>
+          <li data-i18n="programs.room1Li3">😴 Structured rest &amp; snack times</li>
         </ul>
       </div>
       <div class="card">
         <div class="icon-circle tint-blue" style="color:#fff;">🌈</div>
-        <h3>Rainbow Room</h3>
-        <p><strong>Ages 4–5</strong> · Story-driven learning, early numeracy, and lots of creative expression.</p>
+        <h3 data-i18n="programs.room2Title">Rainbow Room</h3>
+        <p><strong data-i18n="programs.room2Age">Ages 4–5</strong> · <span data-i18n="programs.room2Desc">Story-driven learning, early numeracy, and lots of creative expression.</span></p>
         <ul class="info-list" style="margin-top:14px;">
-          <li>🔤 Phonics &amp; pre-reading</li>
-          <li>🔢 Early math concepts</li>
-          <li>🎨 Art, music &amp; movement</li>
+          <li data-i18n="programs.room2Li1">🔤 Phonics &amp; pre-reading</li>
+          <li data-i18n="programs.room2Li2">🔢 Early math concepts</li>
+          <li data-i18n="programs.room2Li3">🎨 Art, music &amp; movement</li>
         </ul>
       </div>
       <div class="card">
         <div class="icon-circle tint-coral" style="color:#fff;">⭐</div>
-        <h3>Star Room</h3>
-        <p><strong>Ages 5–6</strong> · Kindergarten readiness with a focus on reading, writing, and social skills.</p>
+        <h3 data-i18n="programs.room3Title">Star Room</h3>
+        <p><strong data-i18n="programs.room3Age">Ages 5–6</strong> · <span data-i18n="programs.room3Desc">Kindergarten readiness with a focus on reading, writing, and social skills.</span></p>
         <ul class="info-list" style="margin-top:14px;">
-          <li>📖 Reading &amp; writing foundations</li>
-          <li>🧮 Problem solving &amp; logic</li>
-          <li>🤝 Teamwork &amp; leadership</li>
+          <li data-i18n="programs.room3Li1">📖 Reading &amp; writing foundations</li>
+          <li data-i18n="programs.room3Li2">🧮 Problem solving &amp; logic</li>
+          <li data-i18n="programs.room3Li3">🤝 Teamwork &amp; leadership</li>
         </ul>
       </div>
     </div>
@@ -68,15 +74,15 @@
   <section style="background:var(--blue-light);">
     <div class="container grid grid-2" style="align-items:center;">
       <div>
-        <h2>A day full of wonder</h2>
-        <p>Every day balances structured learning with free play, outdoor time, meals, and rest — carefully paced for growing bodies and busy minds.</p>
+        <h2 data-i18n="programs.dayTitle">A day full of wonder</h2>
+        <p data-i18n="programs.dayDesc">Every day balances structured learning with free play, outdoor time, meals, and rest — carefully paced for growing bodies and busy minds.</p>
         <ul class="info-list">
-          <li><span class="info-icon">🌅</span><span><strong>8:00 AM</strong> — Arrival &amp; free play</span></li>
-          <li><span class="info-icon">📚</span><span><strong>9:00 AM</strong> — Circle time &amp; lessons</span></li>
-          <li><span class="info-icon">🍎</span><span><strong>10:30 AM</strong> — Snack &amp; outdoor play</span></li>
-          <li><span class="info-icon">🎨</span><span><strong>1:00 PM</strong> — Creative activities</span></li>
-          <li><span class="info-icon">😴</span><span><strong>2:30 PM</strong> — Rest time</span></li>
-          <li><span class="info-icon">🎶</span><span><strong>3:30 PM</strong> — Music, games &amp; pickup</span></li>
+          <li><span class="info-icon">🌅</span><span data-i18n="programs.time1">8:00 AM — Arrival &amp; free play</span></li>
+          <li><span class="info-icon">📚</span><span data-i18n="programs.time2">9:00 AM — Circle time &amp; lessons</span></li>
+          <li><span class="info-icon">🍎</span><span data-i18n="programs.time3">10:30 AM — Snack &amp; outdoor play</span></li>
+          <li><span class="info-icon">🎨</span><span data-i18n="programs.time4">1:00 PM — Creative activities</span></li>
+          <li><span class="info-icon">😴</span><span data-i18n="programs.time5">2:30 PM — Rest time</span></li>
+          <li><span class="info-icon">🎶</span><span data-i18n="programs.time6">3:30 PM — Music, games &amp; pickup</span></li>
         </ul>
       </div>
       <div class="blob-card" style="max-width:360px;margin:0 auto;background:linear-gradient(135deg, var(--yellow), var(--green));">📚🖍️</div>
@@ -86,9 +92,9 @@
   <section>
     <div class="container">
       <div class="cta-band">
-        <h2>Find the right room for your child</h2>
-        <p>Talk to our team about which program best fits your child's age and personality.</p>
-        <a href="contact.html" class="btn btn-primary">Ask a Question</a>
+        <h2 data-i18n="programs.ctaTitle">Find the right room for your child</h2>
+        <p data-i18n="programs.ctaDesc">Talk to our team about which program best fits your child's age and personality.</p>
+        <a href="contact.html" class="btn btn-primary" data-i18n="programs.ctaBtn">Ask a Question</a>
       </div>
     </div>
   </section>
@@ -98,30 +104,32 @@
       <div class="footer-grid">
         <div>
           <div class="brand" style="color:#fff;"><span class="brand-badge">🎈</span> GO-GO International School</div>
-          <p>A joyful place where curious minds grow, play, and learn together.</p>
+          <p data-i18n="footer.tagline">A joyful place where curious minds grow, play, and learn together.</p>
         </div>
         <div>
-          <h4>Quick Links</h4>
+          <h4 data-i18n="footer.quickLinks">Quick Links</h4>
           <ul style="list-style:none;padding:0;">
-            <li><a href="about.html">About Us</a></li>
-            <li><a href="programs.html">Programs</a></li>
-            <li><a href="gallery.html">Gallery</a></li>
-            <li><a href="contact.html">Contact</a></li>
+            <li><a href="about.html" data-i18n="footer.aboutUs">About Us</a></li>
+            <li><a href="programs.html" data-i18n="footer.programsLink">Programs</a></li>
+            <li><a href="gallery.html" data-i18n="footer.galleryLink">Gallery</a></li>
+            <li><a href="contact.html" data-i18n="footer.contactLink">Contact</a></li>
           </ul>
         </div>
         <div>
-          <h4>Contact</h4>
+          <h4 data-i18n="footer.contactHeading">Contact</h4>
           <ul style="list-style:none;padding:0;">
-            <li>📍 123 Rainbow Lane, Sunshine City</li>
+            <li>📍 <span data-i18n="footer.address">123 Rainbow Lane, Sunshine City</span></li>
             <li>📞 (555) 123-4567</li>
             <li>✉️ hello@gogoschool.edu</li>
           </ul>
         </div>
       </div>
-      <div class="footer-bottom">&copy; 2026 GO-GO International School. All rights reserved.</div>
+      <div class="footer-bottom" data-i18n="footer.copyright">&copy; 2026 GO-GO International School. All rights reserved.</div>
     </div>
   </footer>
 
+  <script src="js/theme.js"></script>
+  <script src="js/i18n.js"></script>
   <script src="js/main.js"></script>
 </body>
 </html>

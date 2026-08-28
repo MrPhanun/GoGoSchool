@@ -11,13 +11,13 @@
     <aside class="sidebar" id="sidebar"></aside>
     <main class="main-content">
       <div class="topbar">
-        <h1>Classes</h1>
-        <button class="btn btn-primary" id="add-btn">+ Add Class</button>
+        <h1 data-i18n="classes.title">Classes</h1>
+        <button class="btn btn-primary" id="add-btn" data-i18n="classes.addBtn">+ Add Class</button>
       </div>
 
       <div class="panel">
         <div id="table-wrap">
-          <div class="empty-state">Loading classes…</div>
+          <div class="empty-state" data-i18n="classes.loading">Loading classes…</div>
         </div>
       </div>
     </main>
@@ -25,33 +25,35 @@
 
   <div class="modal-overlay" id="class-modal">
     <div class="modal">
-      <h3 id="modal-title">Add Class</h3>
+      <h3 id="modal-title" data-i18n="classes.modalAddTitle">Add Class</h3>
       <form id="class-form">
         <input type="hidden" id="class-id" />
         <div class="form-row">
-          <label for="name">Class Name</label>
+          <label for="name" data-i18n="classes.labelName">Class Name</label>
           <input type="text" id="name" required />
         </div>
         <div class="form-row">
-          <label for="ageGroup">Age Group</label>
-          <input type="text" id="ageGroup" placeholder="e.g. 4-5 years" required />
+          <label for="ageGroup" data-i18n="classes.labelAgeGroup">Age Group</label>
+          <input type="text" id="ageGroup" data-i18n-placeholder="classes.placeholderAgeGroup" placeholder="e.g. 4-5 years" required />
         </div>
         <div class="form-row">
-          <label for="teacherId">Teacher</label>
+          <label for="teacherId" data-i18n="classes.labelTeacher">Teacher</label>
           <select id="teacherId" required></select>
         </div>
         <div class="form-row">
-          <label for="capacity">Capacity</label>
+          <label for="capacity" data-i18n="classes.labelCapacity">Capacity</label>
           <input type="number" id="capacity" min="1" required />
         </div>
         <div class="modal-actions">
-          <button type="button" class="btn btn-outline" onclick="closeModal('class-modal')">Cancel</button>
-          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="button" class="btn btn-outline" onclick="closeModal('class-modal')" data-i18n="common.cancelBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-i18n="common.saveBtn">Save</button>
         </div>
       </form>
     </div>
   </div>
 
+  <script src="../js/theme.js"></script>
+  <script src="../js/i18n.js"></script>
   <script src="js/admin.js"></script>
   <script>
     let classes = [];
@@ -66,6 +68,7 @@
       document.getElementById('teacherId').innerHTML = teachers.map((t) => `<option value="${t.id}">${escapeHtml(t.name)}</option>`).join('');
       students = await api('/api/students');
       await loadClasses();
+      window.onLangChange = loadClasses;
     })();
 
     function teacherName(id) {
@@ -82,12 +85,12 @@
       try {
         classes = await api('/api/classes');
         if (!classes.length) {
-          wrap.innerHTML = `<div class="empty-state"><div class="emoji">🏫</div>No classes yet.</div>`;
+          wrap.innerHTML = `<div class="empty-state"><div class="emoji">🏫</div>${t('classes.empty')}</div>`;
           return;
         }
         wrap.innerHTML = `
           <table>
-            <thead><tr><th>Class</th><th>Age Group</th><th>Teacher</th><th>Enrolled</th><th>Capacity</th><th></th></tr></thead>
+            <thead><tr><th>${t('classes.thClass')}</th><th>${t('classes.thAgeGroup')}</th><th>${t('classes.thTeacher')}</th><th>${t('classes.thEnrolled')}</th><th>${t('classes.thCapacity')}</th><th></th></tr></thead>
             <tbody>
               ${classes.map((c) => `
                 <tr>
@@ -108,12 +111,12 @@
           </table>
         `;
       } catch (err) {
-        wrap.innerHTML = `<div class="empty-state">Failed to load classes.</div>`;
+        wrap.innerHTML = `<div class="empty-state">${t('classes.loadError')}</div>`;
       }
     }
 
     document.getElementById('add-btn').addEventListener('click', () => {
-      document.getElementById('modal-title').textContent = 'Add Class';
+      document.getElementById('modal-title').textContent = t('classes.modalAddTitle');
       document.getElementById('class-form').reset();
       document.getElementById('class-id').value = '';
       openModal('class-modal');
@@ -122,7 +125,7 @@
     function editClass(id) {
       const c = classes.find((c) => c.id === id);
       if (!c) return;
-      document.getElementById('modal-title').textContent = 'Edit Class';
+      document.getElementById('modal-title').textContent = t('classes.modalEditTitle');
       document.getElementById('class-id').value = c.id;
       document.getElementById('name').value = c.name;
       document.getElementById('ageGroup').value = c.ageGroup;
@@ -132,10 +135,10 @@
     }
 
     async function deleteClass(id) {
-      if (!confirm('Delete this class?')) return;
+      if (!confirm(t('classes.confirmDelete'))) return;
       try {
         await api(`/api/classes/${id}`, { method: 'DELETE' });
-        showToast('Class deleted');
+        showToast(t('classes.toastDeleted'));
         await loadClasses();
       } catch (err) {
         showToast(err.message, true);
@@ -154,10 +157,10 @@
       try {
         if (id) {
           await api(`/api/classes/${id}`, { method: 'PUT', body: payload });
-          showToast('Class updated');
+          showToast(t('classes.toastUpdated'));
         } else {
           await api('/api/classes', { method: 'POST', body: payload });
-          showToast('Class added');
+          showToast(t('classes.toastAdded'));
         }
         closeModal('class-modal');
         await loadClasses();
