@@ -7,8 +7,11 @@ const config = {
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
   options: {
-    trustServerCertificate: true,
-    encrypt: false,
+    // Local SQL Server uses a self-signed cert and no encryption by default;
+    // Azure SQL (and most cloud SQL Server hosts) require encrypt: true and
+    // a trusted cert. Override via .env for cloud deployments.
+    trustServerCertificate: process.env.DB_TRUST_CERT !== 'false',
+    encrypt: process.env.DB_ENCRYPT === 'true',
   },
 };
 
