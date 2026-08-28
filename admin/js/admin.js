@@ -51,10 +51,14 @@ function renderSidebar(activePage, user) {
 
   mount.innerHTML = `
     <div class="brand"><span class="brand-badge">🎈</span> GO-GO Admin</div>
-    <ul class="side-nav">${links}</ul>
+    <div class="side-nav-scroll">
+      <ul class="side-nav">${links}</ul>
+    </div>
     <div class="sidebar-footer">
-      <div class="user-name">${escapeHtml(user.name)}</div>
-      <span class="role-badge">${escapeHtml(user.role)}</span>
+      <div class="sidebar-footer-info">
+        <div class="user-name">${escapeHtml(user.name)}</div>
+        <span class="role-badge">${escapeHtml(user.role)}</span>
+      </div>
       <button class="logout-btn" id="logout-btn">Log Out</button>
     </div>
   `;

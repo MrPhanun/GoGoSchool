@@ -431,7 +431,7 @@ form.form-card {
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   .nav-links {
     position: absolute;
     top: 100%;
@@ -450,4 +450,23 @@ form.form-card {
   .hero-text h1 { font-size: 2.1rem; }
   .footer-grid { grid-template-columns: 1fr; }
   .cta-band { margin: 0 12px; padding: 36px 20px; }
+}
+
+@media (max-width: 480px) {
+  .container { padding: 0 16px; }
+  .nav { padding: 12px 16px; }
+  .brand { font-size: 1.1rem; gap: 8px; }
+  .brand-badge { width: 36px; height: 36px; font-size: 1.1rem; }
+  .hero { padding: 40px 0 24px; }
+  .hero-text h1 { font-size: 1.7rem; }
+  .hero-text p { font-size: 1rem; }
+  .hero-actions { flex-direction: column; align-items: stretch; }
+  .hero-actions .btn { text-align: center; }
+  .blob-card { font-size: 3.5rem; }
+  section { padding: 40px 0; }
+  .card { padding: 20px; }
+  .page-hero { padding: 32px 0; }
+  .page-hero h1 { font-size: 1.6rem; }
+  form.form-card { padding: 22px; }
+  .stats-strip .stat-num { font-size: 1.9rem; }
 }
